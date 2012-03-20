@@ -1,0 +1,29 @@
+#!/bin/bash
+set -e
+BUILDROOT="$(dirname "$0")"
+
+echo 'Checking if Jetty is already installed...'
+if [ -d ~/jetty ]
+then
+    echo 'Jetty found.'
+else
+    echo 'Jetty not found. Installing it...'
+    curl http://dotcloud-plugins.s3.amazonaws.com/jetty-distribution-8.0.2.v20111006.tar.gz |
+        tar -C ~ -zxf-
+    ln -s jetty-distribution-8.0.2.v20111006 ~/jetty
+    echo 'Jetty installed.'
+fi
+
+echo 'Symlinking jetty logs to Supervisor area...'
+rm -rf ~/jetty/logs
+ln -s /var/log/supervisor ~/jetty/logs
+
+echo 'Removing old webapps...'
+rm -rf ~/jetty/webapps
+echo 'Copying app to webapps directory...'
+cp -av ./$SERVICE_APPROOT ~/jetty/webapps
+
+echo 'Installing run script...'
+cp "$BUILDROOT/run" ~
+
+echo 'Build complete.'

@@ -1,0 +1,7 @@
+jetty:
+  type: custom
+  buildscript: jetty/builder
+  ports:
+    www: http
+  process: ~/run
+  approot: webapps
